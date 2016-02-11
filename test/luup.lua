@@ -11,7 +11,7 @@ end
 
 function luup.log(msg,lvl)
     if(lvl == nil) then value = "nil" end
-    -- print("LOG "..lvl..": "..msg)
+    print("LOG "..lvl..": "..msg)
 end
 
 function luup.variable_get(serviceId,varName,deviceId)
@@ -50,4 +50,26 @@ end
 
 function luup.call_timer()
     return true;
+end
+
+function luup.attr_get(attr, deviceId)
+    key = attr..deviceId
+    value = luupvars[key]
+
+    if(value ~= nil) then 
+        print("variable get: "..key.. " is : "..value)
+    else
+        print("variable get: "..key.. " is : nil")
+    end
+
+    return value
+end
+
+function luup.attr_set(attr,value,deviceId)
+    key = attr..deviceId
+    luupvars[key] = value
+
+    if(value == nil) then value = "nil" end
+
+    print("variable set: "..key..":"..value)
 end
