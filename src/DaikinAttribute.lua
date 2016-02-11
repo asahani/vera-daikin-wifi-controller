@@ -13,7 +13,8 @@ function DaikinAttribute:new (o,description,name,SERVICE_SID,value,deviceId)
 	self.SERVICE_SID = SERVICE_SID
 	self.value = value
 	self.deviceId = deviceId
-
+	setLuupVariable(self.SERVICE_SID,  self.name, self.value, self.deviceId)
+	
 	return o
 end
 
