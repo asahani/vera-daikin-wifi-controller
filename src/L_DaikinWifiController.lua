@@ -127,22 +127,32 @@ local function initDaikin()
 
 	util.initVariableIfNotSet(RTCOA_WIFI_SID, "ForceHold", 0, g_deviceId)
 
-	util.initVariableIfNotSet(TEMP_SENSOR_SID, "CurrentTemperature",  0, g_deviceId)
-	util.initVariableIfNotSet(USER_OPERATING_MODE_SID, "ModeTarget", "Off", g_deviceId)
+local TEMP_SENSOR_SID = "urn:upnp-org:serviceId:TemperatureSensor1"
+util.initVariableIfNotSet(TEMP_SENSOR_SID, "CurrentTemperature",  0, g_deviceId)
+
+local TEMP_SETPOINT_SID= "urn:upnp-org:serviceId:TemperatureSetpoint1"
+local HEAT_SETPOINT_SID = "urn:upnp-org:serviceId:TemperatureSetpoint1_Heat"
+local COOL_SETPOINT_SID = "urn:upnp-org:serviceId:TemperatureSetpoint1_Cool"
+util.initVariableIfNotSet(HEAT_SETPOINT_SID, "CurrentSetpoint", localizeTemp(60), g_deviceId)
+	util.initVariableIfNotSet(COOL_SETPOINT_SID, "CurrentSetpoint", localizeTemp(80), g_deviceId)
+
+local FAN_MODE_SID = "urn:upnp-org:serviceId:HVAC_FanOperatingMode1"
+util.initVariableIfNotSet(FAN_MODE_SID, "Mode", "Auto", g_deviceId)
+	util.initVariableIfNotSet(FAN_MODE_SID, "FanStatus", "Off", g_deviceId)
+
+local FAN_SPEED_SID  = "urn:upnp-org:serviceId:FanSpeed1"
+
+local USER_OPERATING_MODE_SID = "urn:upnp-org:serviceId:HVAC_UserOperatingMode1"
+util.initVariableIfNotSet(USER_OPERATING_MODE_SID, "ModeTarget", "Off", g_deviceId)
 	util.initVariableIfNotSet(USER_OPERATING_MODE_SID, "ModeStatus", "Off", g_deviceId)
 	util.initVariableIfNotSet(USER_OPERATING_MODE_SID, "EnergyModeTarget", "Normal", g_deviceId)
 	util.initVariableIfNotSet(USER_OPERATING_MODE_SID, "EnergyModeStatus", "Normal", g_deviceId)
-	util.initVariableIfNotSet(FAN_MODE_SID, "Mode", "Auto", g_deviceId)
-	util.initVariableIfNotSet(FAN_MODE_SID, "FanStatus", "Off", g_deviceId)
-	util.initVariableIfNotSet(HEAT_SETPOINT_SID, "CurrentSetpoint", localizeTemp(60), g_deviceId)
-	util.initVariableIfNotSet(COOL_SETPOINT_SID, "CurrentSetpoint", localizeTemp(80), g_deviceId)
-	util.initVariableIfNotSet(TEMPERATURE_HOLD_SID, "Target", 0, g_deviceId)
-	util.initVariableIfNotSet(TEMPERATURE_HOLD_SID, "Status", 0, g_deviceId)
 
-	util.initVariableIfNotSet(MCV_OPERATING_STATE_SID, "ModeState", "Off", g_deviceId)
-
-	util.initVariableIfNotSet(MCV_ENERGY_METERING_SID, "UserSuppliedWattage", "0,0,0", g_deviceId)
-
+local MCV_HA_DEVICE_SID = "urn:micasaverde-com:serviceId:HaDevice1"
+local MCV_OPERATING_STATE_SID = "urn:micasaverde-com:serviceId:HVAC_OperatingState1"
+util.initVariableIfNotSet(MCV_OPERATING_STATE_SID, "ModeState", "Off", g_deviceId)
+	
+	
 	local attributes = {
 		["test"] = initVariableIfNotSet("description",  "variableName", "serviceId", "initValue", daikin_device)
 		["ModeStatus"] = initVariableIfNotSet("Operating Mode Status",  "ModeStatus", USER_OPERATING_MODE_SID, "off", daikin_device)
