@@ -127,38 +127,50 @@ local function initDaikin()
 
 	util.initVariableIfNotSet(RTCOA_WIFI_SID, "ForceHold", 0, g_deviceId)
 
-local TEMP_SENSOR_SID = "urn:upnp-org:serviceId:TemperatureSensor1"
-util.initVariableIfNotSet(TEMP_SENSOR_SID, "CurrentTemperature",  0, g_deviceId)
 
-local TEMP_SETPOINT_SID= "urn:upnp-org:serviceId:TemperatureSetpoint1"
-local HEAT_SETPOINT_SID = "urn:upnp-org:serviceId:TemperatureSetpoint1_Heat"
-local COOL_SETPOINT_SID = "urn:upnp-org:serviceId:TemperatureSetpoint1_Cool"
-util.initVariableIfNotSet(HEAT_SETPOINT_SID, "CurrentSetpoint", localizeTemp(60), g_deviceId)
-	util.initVariableIfNotSet(COOL_SETPOINT_SID, "CurrentSetpoint", localizeTemp(80), g_deviceId)
 
-local FAN_MODE_SID = "urn:upnp-org:serviceId:HVAC_FanOperatingMode1"
-util.initVariableIfNotSet(FAN_MODE_SID, "Mode", "Auto", g_deviceId)
-	util.initVariableIfNotSet(FAN_MODE_SID, "FanStatus", "Off", g_deviceId)
 
-local FAN_SPEED_SID  = "urn:upnp-org:serviceId:FanSpeed1"
 
-local USER_OPERATING_MODE_SID = "urn:upnp-org:serviceId:HVAC_UserOperatingMode1"
-util.initVariableIfNotSet(USER_OPERATING_MODE_SID, "ModeTarget", "Off", g_deviceId)
-	util.initVariableIfNotSet(USER_OPERATING_MODE_SID, "ModeStatus", "Off", g_deviceId)
-	util.initVariableIfNotSet(USER_OPERATING_MODE_SID, "EnergyModeTarget", "Normal", g_deviceId)
-	util.initVariableIfNotSet(USER_OPERATING_MODE_SID, "EnergyModeStatus", "Normal", g_deviceId)
 
-local MCV_HA_DEVICE_SID = "urn:micasaverde-com:serviceId:HaDevice1"
-local MCV_OPERATING_STATE_SID = "urn:micasaverde-com:serviceId:HVAC_OperatingState1"
-util.initVariableIfNotSet(MCV_OPERATING_STATE_SID, "ModeState", "Off", g_deviceId)
 	
 	
 	local attributes = {
 		["test"] = initVariableIfNotSet("description",  "variableName", "serviceId", "initValue", daikin_device)
-		["ModeStatus"] = initVariableIfNotSet("Operating Mode Status",  "ModeStatus", USER_OPERATING_MODE_SID, "off", daikin_device)
+
+		-- Set varaibles for USER_OPERATING_MODE_SID = "urn:upnp-org:serviceId:HVAC_UserOperatingMode1"
+		["ModeStatus"] = initVariableIfNotSet("Operating Mode Status",  "ModeStatus", USER_OPERATING_MODE_SID, "Off", daikin_device)
+		["ModeTarget"] = initVariableIfNotSet("Operating Mode Target", "ModeTarget", USER_OPERATING_MODE_SID, , "Off", daikin_device)
+
+		-- Set varaibles for TEMP_SENSOR_SID = "urn:upnp-org:serviceId:TemperatureSensor1"
+		["XXXX"] = initVariableIfNotSet("Current Temperature",  "CurrentTemperature", TEMP_SENSOR_SID, 0, daikin_device)
+
+		-- Set varaibles for TEMP_SETPOINT_SID= "urn:upnp-org:serviceId:TemperatureSetpoint1"
+		-- HEAT_SETPOINT_SID = "urn:upnp-org:serviceId:TemperatureSetpoint1_Heat"
+		-- COOL_SETPOINT_SID = "urn:upnp-org:serviceId:TemperatureSetpoint1_Cool"
+		["XXXX"] = initVariableIfNotSet("Temperature Set Point",  "CurrentSetpoint", TEMP_SETPOINT_SID, DEFAULT_SETPOINT, daikin_device)
+		["XXXX"] = initVariableIfNotSet("Temperature Set Point",  "CurrentSetpoint", HEAT_SETPOINT_SID, DEFAULT_SETPOINT, daikin_device)
+		["XXXX"] = initVariableIfNotSet("Temperature Set Point",  "CurrentSetpoint", COOL_SETPOINT_SID, DEFAULT_SETPOINT, daikin_device)
+
+		-- Set varaibles for MCV_OPERATING_STATE_SID = "urn:micasaverde-com:serviceId:HVAC_OperatingState1"
+		-- ["ModeState"] = initVariableIfNotSet("MCV Mode State",  "ModeState", MCV_OPERATING_STATE_SID, "off", daikin_device)
+		
+		-- Set varaibles for FAN_MODE_SID = "urn:upnp-org:serviceId:HVAC_FanOperatingMode1"
+		["FanMode"] = initVariableIfNotSet("Fan Mode",  "Mode", FAN_MODE_SID, "Auto", daikin_device)
+		["FanStatus"] = initVariableIfNotSet("Fan Status",  "FanStatus", FAN_MODE_SID, "Off", daikin_device)
+
+		-- Set varaibles for FAN_SPEED_SID  = "urn:upnp-org:serviceId:FanSpeed1"
+		["f_rate"] = initVariableIfNotSet("Fan Speed",  "FanSpeedStatus", FAN_SPEED_SID, "A", daikin_device)
 
 	}
 	daikin.attributes = attributes
+end
+
+local function initDaikin()
+	initVariables()
+	initDaikinInfo()
+end
+
+local function initPlugin()
 end
 ---------------------------------------------------------------------
 -- Statrup Function
@@ -177,13 +189,13 @@ function DaikinStartup(lul_device)
 	if (ip == "") then
 	  return false, "sendCommand: No IP address.", "Daikin Wifi Controller"
 	end
--- set plugin version number
+	-- set plugin version number
 	luup.variable_set(RTCOA_WIFI_SID, "PluginVersion", PLUGIN_VERSION, g_deviceId)
 
 	luup.variable_set(SKYFI_SID, "Message", "", skyfi_device)
-	local config = tonumber(luup.variable_get(HADEVICE_SID,  HAD_CONFIG, skyfi_device),10) or ""
+	local config = tonumber(luup.variable_get(MCV_HA_DEVICE_SID,  HAD_CONFIG, skyfi_device),10) or ""
     if (config == "") then
-      luup.variable_set(HADEVICE_SID, HAD_CONFIG, "0", skyfi_device)
+      luup.variable_set(MCV_HA_DEVICE_SID, HAD_CONFIG, "0", skyfi_device)
     end
     daikin = Daikin:new("","",daikin_device)
     initDaikin()

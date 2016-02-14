@@ -33,14 +33,20 @@ function parseBody(body)
 --   local data = nil
 --   print("key : "..key.."-- value : "..value)
 -- end
-  -- local response = g_dvar[key]
-  -- if (response == nil or type(response.handlerFunc) ~= "function") then
-  --   debug("parseBody: ERROR: Not handled parameter type:" .. (key or "") .. " value=" .. (value or "") .. ".")
-  -- else
-  --   debug("parseBody: key=" .. (key or "") .. " value=" .. (value or "") .. ".")
-  --   response:handlerFunc(value, body)
-  -- end
+
 	return valuePairs
+end
+
+-- Convert HEX of format %xx%xx%xx
+function hexToASCII(str)
+	local retString = ""
+	
+	for i in string.gmatch(string.gsub(str, "%%", " "), "%S+") do
+  		print(i)
+  		retString = retString .. string.char(tonumber(i, 16))
+	end
+	-- print(retString)
+    return retString
 end
 
 -----------------------------------------

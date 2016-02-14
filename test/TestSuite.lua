@@ -66,6 +66,13 @@ TestUtil ={}
 		luaunit.assertEquals(valuePairs["ret"],"OK")
 	end
 
+	function TestUtil:testHexToASCII()
+		local hexString = "%4c%6f%75%6e%67%65"
+		local asciiString = hexToASCII(hexString)
+
+		luaunit.assertEquals(asciiString,"Lounge")
+	end
+
 -- end of table TestUtil
 
 TestDaikinAttribute = {}
