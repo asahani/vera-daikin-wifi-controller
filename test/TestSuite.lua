@@ -78,7 +78,7 @@ TestUtil ={}
 TestDaikinAttribute = {}
 
 	function TestDaikinAttribute:testNewAttribute()
-		local attr = DaikinAttribute:new(nil,"Test Attribute","Test Service name","urn:upnp-org:serviceId:HVAC_UserOperatingMode1",1,1)
+		local attr = DaikinAttribute:new("Test Attribute","Test Service name","urn:upnp-org:serviceId:HVAC_UserOperatingMode1",1,1)
 		luaunit.assertEquals(attr.description,"Test Attribute")
 		luaunit.assertEquals(attr.name,"Test Service name")
 		luaunit.assertEquals(attr.SERVICE_SID,"urn:upnp-org:serviceId:HVAC_UserOperatingMode1")
@@ -93,16 +93,32 @@ TestDaikinAttribute = {}
 	end
 -- end of table TestDaikinAttribute
 
-TestDaikin ={}
+TestDaikin = {}
+	
+	function TestDaikin:testInitVariableIfNotSet()
+		local attrib = initVariableIfNotSet("Test Desc",  "Test name", "TEST_ID", 120, 150)
+		luaunit.assertEquals(attrib.name,"Test name")	
+		luaunit.assertNotNil(attrib)
+
+	end
+
+	function TestDaikin:testInitVariables()
+		
+		local attribs = initVariables(111)
+		
+		luaunit.assertEquals(attribs["test"].name,"variableName")	
+		luaunit.assertNotNil(attribs)
+	end
 
 	function TestDaikin:testNewDaikinDevice()
-		local device = Daikin:new(nil,"Aircon","2.0.2",1)
+		local device = Daikin:new("Aircon","2.0.2",1)
 		luaunit.assertEquals(device.deviceType,"Aircon")
 		luaunit.assertEquals(device.version,"2.0.2")
 		luaunit.assertEquals(device.deviceId,1)
 		luaunit.assertNotNil(device.attributes)
 	end
 
-
+	
 -- end of table TestDaikin
+
 os.exit(luaunit.LuaUnit.run())

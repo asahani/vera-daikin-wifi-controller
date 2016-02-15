@@ -42,7 +42,7 @@ function hexToASCII(str)
 	local retString = ""
 	
 	for i in string.gmatch(string.gsub(str, "%%", " "), "%S+") do
-  		print(i)
+  		-- print(i)
   		retString = retString .. string.char(tonumber(i, 16))
 	end
 	-- print(retString)

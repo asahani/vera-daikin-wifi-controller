@@ -2,12 +2,11 @@ util = require('util')
 
 -- Meta class
 DaikinAttribute = {description = "", name= "", SERVICE_SID = "", value = "", deviceId = ""}
+DaikinAttribute.__index = DaikinAttribute
 
 -- Base class method new
-function DaikinAttribute:new (o,description,name,SERVICE_SID,value,deviceId)
-	o = o or {}
-	setmetatable(o,self)
-	self.__index = self
+function DaikinAttribute.new (o, description,name,SERVICE_SID,value,deviceId)
+	local self = setmetatable({},DaikinAttribute)
 	self.description = description
 	self.name = name
 	self.SERVICE_SID = SERVICE_SID
@@ -15,7 +14,7 @@ function DaikinAttribute:new (o,description,name,SERVICE_SID,value,deviceId)
 	self.deviceId = deviceId
 	setLuupVariable(self.SERVICE_SID,  self.name, self.value, self.deviceId)
 	
-	return o
+	return self
 end
 
 -- Derived class methods
