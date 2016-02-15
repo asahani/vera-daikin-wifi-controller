@@ -94,16 +94,16 @@ TestDaikinAttribute = {}
 -- end of table TestDaikinAttribute
 
 TestDaikin = {}
-	
+
+
 	function TestDaikin:testInitVariableIfNotSet()
 		local attrib = initVariableIfNotSet("Test Desc",  "Test name", "TEST_ID", 120, 150)
+
 		luaunit.assertEquals(attrib.name,"Test name")	
 		luaunit.assertNotNil(attrib)
-
 	end
 
 	function TestDaikin:testInitVariables()
-		
 		local attribs = initVariables(111)
 		
 		luaunit.assertEquals(attribs["test"].name,"variableName")	
@@ -111,11 +111,16 @@ TestDaikin = {}
 	end
 
 	function TestDaikin:testNewDaikinDevice()
-		local device = Daikin:new("Aircon","2.0.2",1)
-		luaunit.assertEquals(device.deviceType,"Aircon")
+		local device = Daikin.new("Tname","aircon","2.0.2",1)
+
+		luaunit.assertNotNil(device)
+		luaunit.assertEquals(device.deviceName,"Tname")	
+		luaunit.assertEquals(device.deviceType,"aircon")
 		luaunit.assertEquals(device.version,"2.0.2")
 		luaunit.assertEquals(device.deviceId,1)
+
 		luaunit.assertNotNil(device.attributes)
+		luaunit.assertEquals(device.attributes["test"].name,"variableName")	
 	end
 
 	

@@ -70,13 +70,12 @@ local function commandRetry(command_url, data, retry)
 end
 
 
-
-
-
 local function initDaikin()
 	initVariables()
 	initDaikinInfo()
 end
+
+initDaikinInfo()
 
 local function initPlugin()
 end

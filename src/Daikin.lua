@@ -1,6 +1,5 @@
 util = require('util')
 
-
 local DEFAULT_SETPOINT = 21
 
 ------------------------------------------------------------------
@@ -19,46 +18,60 @@ local MCV_HA_DEVICE_SID = "urn:micasaverde-com:serviceId:HaDevice1"
 local MCV_OPERATING_STATE_SID = "urn:micasaverde-com:serviceId:HVAC_OperatingState1"
 
 -- Meta class
-Daikin = {deviceType = "", version = "", deviceId = ""}
+Daikin = {deviceName = "", deviceType = "", version = "", deviceId = "", attributes  ={}}
 Daikin.__index = Daikin
 
 -- Base class method new
-function Daikin.new(o,deviceType,version,deviceId)
+function Daikin.new(deviceName, deviceType, version, deviceId)
 	local self = setmetatable({},Daikin)
-	self.__index = self
+
+	self.deviceName = deviceName
 	self.deviceType = deviceType
 	self.version = version
 	self.deviceId = deviceId
-	self.attributes = {}
+
+	self.attributes = initVariables(deviceId)
+
 	return self
 end
 
 
 -- Derived class methods
 function Daikin:setAttribute(attrKey,attrValue)
-	local attr = attributes[attrKey]
+	local attr = self.attributes[attrKey]
 	if (attr == nil) then
 		debug("DaikinAttribute:SetAttribute: ERROR: Not handled parameter type:" .. (attrKey or "") .. " value=" .. (attrValue or "") .. ".")
 	else
 		debug("DaikinAttribute:SetAttribute: key=" .. (attrKey or "") .. " value=" .. (attrValue or "") .. ".")
 		attr.setValue(attrValue)
+		self.attributes[attrKey] = attr
 	end
 
 	-- Implement if conditions for Vera specific service files
+	if attrKey == "pow"
+	elseif attrKey == "pow"
+	elseif attrKey == "pow"
+	elseif attrKey == "pow"
+	elseif attrKey == "pow"
+	elseif attrKey == "pow"
+	elseif attrKey == "pow"	
+	end
+
 end
+
 
 function initVariables(daikin_device)
 	-- initialize state variables
 	
 	local attribs = {}
 	attribs["test"] = initVariableIfNotSet("description",  "variableName", "serviceId", "initValue", daikin_device)
-print(attribs["test"].name)
+
 	attribs["ret"] = initVariableIfNotSet("Command Return Status", "ret", DAIKIN_WIFI_SID, "OK", daikin_device)
-print(attribs["test"].name)
+
 	---------- Set Mode ---------
 	attribs["pow"] = initVariableIfNotSet("Power",  "pow", DAIKIN_WIFI_SID, 0, daikin_device)
 	attribs["mode"] = initVariableIfNotSet("Operating Mode Target", "mode", DAIKIN_WIFI_SID, "Off", daikin_device)
-print(attribs["test"].name)
+
 	---------- Current Temprature ---------
 	-- Set varaibles for TEMP_SENSOR_SID = "urn:upnp-org:serviceId:TemperatureSensor1"
 	attribs["htemp"] = initVariableIfNotSet("Current Temperature",  "CurrentTemperature", TEMP_SENSOR_SID, 0, daikin_device)
