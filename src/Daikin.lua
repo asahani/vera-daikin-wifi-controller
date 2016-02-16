@@ -1,12 +1,8 @@
 util = require('util')
 
-local DEFAULT_SETPOINT = 21
-
 ------------------------------------------------------------------
 ----- Define SIDs used by the various thermostat services -------
 ------------------------------------------------------------------
-local DAIKIN_WIFI_SID  = "urn:asahani-org:serviceId:DaikinWifiController1"
-
 local TEMP_SENSOR_SID = "urn:upnp-org:serviceId:TemperatureSensor1"
 local TEMP_SETPOINT_SID= "urn:upnp-org:serviceId:TemperatureSetpoint1"
 local HEAT_SETPOINT_SID = "urn:upnp-org:serviceId:TemperatureSetpoint1_Heat"
@@ -16,6 +12,22 @@ local FAN_SPEED_SID  = "urn:upnp-org:serviceId:FanSpeed1"
 local USER_OPERATING_MODE_SID = "urn:upnp-org:serviceId:HVAC_UserOperatingMode1"
 local MCV_HA_DEVICE_SID = "urn:micasaverde-com:serviceId:HaDevice1"
 local MCV_OPERATING_STATE_SID = "urn:micasaverde-com:serviceId:HVAC_OperatingState1"
+
+------------------------------------------------------------------
+----- Define Daikin Specific Values -------
+------------------------------------------------------------------
+local DEFAULT_SETPOINT = 21
+
+local DAIKIN_WIFI_SID  = "urn:asahani-org:serviceId:DaikinWifiController1"
+
+local POW_VARIABLE = "pow"
+local MODE_VARIABLE = "mode"
+local STEMP_VARIABLE = "stemp"
+local HTEMP_VARIABLE = "htemp"
+local FRATE_VARIABLE= "f_rate"
+local FDIR_VARIABLE = "f_dir"
+local RETURN_VARIABLE = "ret"
+local SHUM_VARIABLE = "shum"
 
 local g_modes = {
   ['0'] = "AutoChangeOver",
@@ -54,7 +66,7 @@ function Daikin:setAttribute(attrKey,attrValue)
 		debug("DaikinAttribute:SetAttribute: key=" .. (attrKey or "") .. " value=" .. (attrValue or "") .. ".")
 
 		-- Implement if conditions for Vera specific service files
-		if attrKey == "pow" then
+		if attrKey == POW_VARIABLE then
 			if attrValue == "0" then
 				setLuupVariable(USER_OPERATING_MODE_SID, "ModeStatus", "Off", attr.deviceId)
 				setLuupVariable(FAN_MODE_SID, "FanStatus", "Off", attr.deviceId)
@@ -63,11 +75,12 @@ function Daikin:setAttribute(attrKey,attrValue)
 			end
 			attr:setValue(attrValue)
 
-		elseif attrKey == "mode" then
+		elseif attrKey == MODE_VARIABLE then
 			local mode = g_modes[attrValue] or "nil"
 			setLuupVariable(USER_OPERATING_MODE_SID, "ModeStatus", mode, attr.deviceId)
 			attr:setValue(attrValue)
-		elseif attrKey == "stemp" then
+
+		elseif attrKey == STEMP_VARIABLE then
 			local tempVal = tonumber(attrValue,10)
 			if tempVal ~= nil then
 				setLuupVariable(TEMP_SETPOINT_SID, "CurrentSetpoint", tempVal, attr.deviceId)
@@ -75,13 +88,14 @@ function Daikin:setAttribute(attrKey,attrValue)
 				setLuupVariable(COOL_SETPOINT_SID, "CurrentSetpoint", tempVal, attr.deviceId)
 				attr:setValue(tempVal)
 			end
-		elseif attrKey == "htemp" then
+
+		elseif attrKey == HTEMP_VARIABLE then
 			local htempVal = tonumber(attrValue,10)
 			if htempVal ~= nil then
 				attr:setValue(htempVal)
 			end
 
-		elseif attrKey == "f_rate" then
+		elseif attrKey == FRATE_VARIABLE then
 			local fVal = tonumber(attrValue)
 			if fVal ~= nil then
 				setLuupVariable(FAN_SPEED_SID, "FanSpeedStatus", fVal, attr.deviceId)
@@ -91,6 +105,7 @@ function Daikin:setAttribute(attrKey,attrValue)
 				setLuupVariable(TEMP_SETPOINT_SID, "CurrentSetpoint", "Auto", attr.deviceId)
 				attr:setValue(attrValue)
 			end
+
 		else
 			attr:setValue(attrValue)
 		end
@@ -107,27 +122,27 @@ function initVariables(daikin_device)
 	local attribs = {}
 	attribs["test"] = initVariableIfNotSet("description",  "variableName", "serviceId", "initValue", daikin_device)
 
-	attribs["ret"] = initVariableIfNotSet("Command Return Status", "ret", DAIKIN_WIFI_SID, "OK", daikin_device)
+	attribs[RETURN_VARIABLE] = initVariableIfNotSet("Command Return Status", RETURN_VARIABLE, DAIKIN_WIFI_SID, "OK", daikin_device)
 
 	---------- Set Mode ---------
-	attribs["pow"] = initVariableIfNotSet("Power",  "pow", DAIKIN_WIFI_SID, "0", daikin_device)
-	attribs["mode"] = initVariableIfNotSet("Operating Mode Target", "mode", DAIKIN_WIFI_SID, "Off", daikin_device)
+	attribs[POW_VARIABLE] = initVariableIfNotSet("Power",  POW_VARIABLE, DAIKIN_WIFI_SID, "0", daikin_device)
+	attribs[MODE_VARIABLE] = initVariableIfNotSet("Operating Mode Target", MODE_VARIABLE, DAIKIN_WIFI_SID, "Off", daikin_device)
 
 	---------- Current Temprature ---------
 	-- Set varaibles for TEMP_SENSOR_SID = "urn:upnp-org:serviceId:TemperatureSensor1"
-	attribs["htemp"] = initVariableIfNotSet("Current Temperature",  "CurrentTemperature", TEMP_SENSOR_SID, 0, daikin_device)
+	attribs[HTEMP_VARIABLE] = initVariableIfNotSet("Current Temperature",  "CurrentTemperature", TEMP_SENSOR_SID, 0, daikin_device)
 
 	---------- Set Temprature ---------
-	attribs["stemp"] = initVariableIfNotSet("UPnP Temperature Set Point",  "CurrentSetpoint", TEMP_SETPOINT_SID, DEFAULT_SETPOINT, daikin_device)
+	attribs[STEMP_VARIABLE] = initVariableIfNotSet("UPnP Temperature Set Point",  "CurrentSetpoint", TEMP_SETPOINT_SID, DEFAULT_SETPOINT, daikin_device)
 	
 	---------- Fan Control ---------
 	
 	-- Set varaibles for FAN_SPEED_SID  = "urn:upnp-org:serviceId:FanSpeed1"
-	attribs["f_rate"] = initVariableIfNotSet("Fan Speed",  "FanSpeedStatus", DAIKIN_WIFI_SID, "A", daikin_device)
-	attribs["f_dir"] = initVariableIfNotSet("Fan Direction", "f_dir", DAIKIN_WIFI_SID, 3, daikin_device)
+	attribs[FRATE_VARIABLE] = initVariableIfNotSet("Fan Speed",  "FanSpeedStatus", DAIKIN_WIFI_SID, "A", daikin_device)
+	attribs[FDIR_VARIABLE] = initVariableIfNotSet("Fan Direction", "FDIR_VARIABLE", DAIKIN_WIFI_SID, 3, daikin_device)
 
 	---------- Humidity ---------
-	attribs["shum"] = initVariableIfNotSet("Humidity",  "shum", DAIKIN_WIFI_SID, 0, daikin_device)
+	attribs[SHUM_VARIABLE] = initVariableIfNotSet("Humidity",  SHUM_VARIABLE, DAIKIN_WIFI_SID, 0, daikin_device)
 
 
 	-- Set varaibles for USER_OPERATING_MODE_SID = "urn:upnp-org:serviceId:HVAC_UserOperatingMode1"
