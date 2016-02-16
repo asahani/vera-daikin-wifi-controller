@@ -123,6 +123,15 @@ TestDaikin = {}
 		luaunit.assertEquals(device.attributes["test"].name,"variableName")	
 	end
 
+	function TestDaikin:testNewDaikinDevice()
+		local device = Daikin.new("Tname","aircon","2.0.2",1)
+
+		device:setAttribute("stemp",18.0)
+
+		luaunit.assertNotNil(device.attributes)
+		luaunit.assertEquals(device.attributes["stemp"].value,18.0)	
+	end
+
 	
 -- end of table TestDaikin
 
