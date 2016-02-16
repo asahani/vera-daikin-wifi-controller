@@ -56,11 +56,11 @@ function luup.attr_get(attr, deviceId)
     key = attr..deviceId
     value = luupvars[key]
 
-    if(value ~= nil) then 
-        print("variable get: "..key.. " is : "..value)
-    else
-        print("variable get: "..key.. " is : nil")
-    end
+    -- if(value ~= nil) then 
+    --     print("variable get: "..key.. " is : "..value)
+    -- else
+    --     print("variable get: "..key.. " is : nil")
+    -- end
 
     return value
 end
@@ -71,5 +71,5 @@ function luup.attr_set(attr,value,deviceId)
 
     if(value == nil) then value = "nil" end
 
-    print("variable set: "..key..":"..value)
+    -- print("variable set: "..key..":"..value)
 end

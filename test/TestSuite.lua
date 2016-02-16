@@ -61,7 +61,7 @@ TestUtil ={}
 	end
 
 	function TestUtil:testParseBody()
-		local valuePairs = parseBody("ret=OK,pow=0,mode=3,adv=,stemp=18.0,shum=0,dt1=25.0,dt2=M,dt3=18.0,dt4=25.0,dt5=25.0,dt7=25.0,dh1=AUTO,dh2=50,dh3=0,dh4=0,dh5=0,dh7=AUTO,dhh=50,b_mode=3,b_stemp=18.0,b_shum=0,alert=255")
+		local valuePairs = parseBody("ret=OK,pow=0,mode=3,adv=,stemp=17.0,shum=0,dt1=25.0,dt2=M,dt3=18.0,dt4=25.0,dt5=25.0,dt7=25.0,dh1=AUTO,dh2=50,dh3=0,dh4=0,dh5=0,dh7=AUTO,dhh=50,b_mode=3,b_stemp=17.0,b_shum=0,alert=255")
 		luaunit.assertNotNil(valuePairs)
 		luaunit.assertEquals(valuePairs["ret"],"OK")
 	end
@@ -111,27 +111,31 @@ TestDaikin = {}
 	end
 
 	function TestDaikin:testNewDaikinDevice()
-		local device = Daikin.new("Tname","aircon","2.0.2",1)
+		local device = Daikin.new(1)
 
 		luaunit.assertNotNil(device)
-		luaunit.assertEquals(device.deviceName,"Tname")	
-		luaunit.assertEquals(device.deviceType,"aircon")
-		luaunit.assertEquals(device.version,"2.0.2")
 		luaunit.assertEquals(device.deviceId,1)
 
 		luaunit.assertNotNil(device.attributes)
 		luaunit.assertEquals(device.attributes["test"].name,"variableName")	
 	end
 
-	function TestDaikin:testNewDaikinDevice()
-		local device = Daikin.new("Tname","aircon","2.0.2",1)
+	function TestDaikin:testSetAttribute()
+		local device = Daikin.new(1)
 
 		device:setAttribute("stemp",18.0)
 
 		luaunit.assertNotNil(device.attributes)
 		luaunit.assertEquals(device.attributes["stemp"].value,18.0)	
 	end
-
+	
+	function TestDaikin:testSetAttributes()
+		local device = Daikin.new(1)
+		device:setAttributes(parseBody("r_ret=OKs,pow=0,mode=3,adv=,stemp=19.0,shum=0,dt1=25.0,dt2=M,dt3=18.0,dt4=25.0,dt5=25.0,dt7=25.0,dh1=AUTO,dh2=50,dh3=0,dh4=0,dh5=0,dh7=AUTO,dhh=50,b_mode=3,b_stemp=18.0,b_shum=0,alert=255")
+)
+		luaunit.assertNotNil(device.attributes)
+		luaunit.assertEquals(device.attributes["stemp"].value,19.0)	
+	end
 	
 -- end of table TestDaikin
 

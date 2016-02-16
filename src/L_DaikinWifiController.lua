@@ -69,16 +69,23 @@ local function commandRetry(command_url, data, retry)
 	sendCommand(command_url, data, retry)
 end
 
-
-local function initDaikin()
-	initVariables()
-	initDaikinInfo()
-end
-
-initDaikinInfo()
-
 local function initPlugin()
+	-- set plugin version number
+	luup.variable_set(RTCOA_WIFI_SID, "PluginVersion", PLUGIN_VERSION, g_deviceId)
+
+	luup.variable_set(SKYFI_SID, "Message", "", skyfi_device)
+	local config = tonumber(luup.variable_get(MCV_HA_DEVICE_SID,  HAD_CONFIG, skyfi_device),10) or ""
+    if (config == "") then
+      luup.variable_set(MCV_HA_DEVICE_SID, HAD_CONFIG, "0", skyfi_device)
+    end
 end
+
+-- Called in loop
+function update()
+	--get_control_info
+	--getsensorinfo
+end
+
 ---------------------------------------------------------------------
 -- Statrup Function
 ---------------------------------------------------------------------
@@ -87,6 +94,7 @@ function DaikinStartup(lul_device)
 
     daikin_device = lul_device
 
+    -- PREREQUISITES CHECK
     local code = getDeviceCode(daikin_device)
 	if (code == "") then
       return false, "sendCommand: No device code.", "Daikin Wifi Controller"
@@ -96,16 +104,11 @@ function DaikinStartup(lul_device)
 	if (ip == "") then
 	  return false, "sendCommand: No IP address.", "Daikin Wifi Controller"
 	end
-	-- set plugin version number
-	luup.variable_set(RTCOA_WIFI_SID, "PluginVersion", PLUGIN_VERSION, g_deviceId)
 
-	luup.variable_set(SKYFI_SID, "Message", "", skyfi_device)
-	local config = tonumber(luup.variable_get(MCV_HA_DEVICE_SID,  HAD_CONFIG, skyfi_device),10) or ""
-    if (config == "") then
-      luup.variable_set(MCV_HA_DEVICE_SID, HAD_CONFIG, "0", skyfi_device)
-    end
-    daikin = Daikin:new("","",daikin_device)
-    initDaikin()
-
-    luup.attr_set("manufacturer", value, skyfi_device)
+	-- initialise the plugin
+	initPlugin()
+	-- create Daikin device
+    daikin = Daikin:new(daikin_device)
+  	-- Set Model: getmodelinfo as new varibale with daikinSID
+    -- Set basic Info including name,type,version_info
 end

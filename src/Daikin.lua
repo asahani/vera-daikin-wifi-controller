@@ -38,25 +38,30 @@ local g_modes = {
 }
 
 -- Meta class
-Daikin = {deviceName = "", deviceType = "", version = "", deviceId = "", attributes  ={}}
+Daikin = {deviceId = "", attributes  ={}}
 Daikin.__index = Daikin
 
 -- Base class method new
-function Daikin.new(deviceName, deviceType, version, deviceId)
+function Daikin.new(deviceId)
 	local self = setmetatable({},Daikin)
 
-	self.deviceName = deviceName
-	self.deviceType = deviceType
-	self.version = version
 	self.deviceId = deviceId
-
 	self.attributes = initVariables(deviceId)
+	--Set Manufacturer
+    luup.attr_set("manufacturer", "Daikin", self.deviceId)
 
 	return self
 end
 
 
 -- Derived class methods
+function Daikin:setAttributes(attribs)
+	for key,val in pairs(attribs) do
+--	  print("key : "..key.."-- value : "..val)
+	  self:setAttribute(key,val)
+	end
+end
+
 function Daikin:setAttribute(attrKey,attrValue)
 	local attr = self.attributes[attrKey]
 
@@ -182,7 +187,7 @@ function initVariableIfNotSet(description,  variableName, serviceId, initValue, 
 
 	local attr = DaikinAttribute:new(description,variableName,serviceId,value,deviceId)
 	
-	log("Set initial value of "..attr.name.." (".. attr.SERVICE_SID.. ") to "..attr.value)
+	debug("Set initial value of "..attr.name.." (".. attr.SERVICE_SID.. ") to "..attr.value)
 
 	return attr
 end

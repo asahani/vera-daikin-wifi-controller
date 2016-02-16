@@ -26,13 +26,12 @@ end
 function parseBody(body)
 
 	local valuePairs = {}
-	for key,value in body:gmatch"(%w+)=(%w+)" do
+	for key,value in body:gmatch"([_%w]+)=([_%w]+)" do
 		valuePairs[key]=value
 	end
--- for key,value in valuePairs do
---   local data = nil
---   print("key : "..key.."-- value : "..value)
--- end
+	-- for key,value in pairs(valuePairs) do
+	--   print("key : "..key.."-- value : "..value)
+	-- end
 
 	return valuePairs
 end
