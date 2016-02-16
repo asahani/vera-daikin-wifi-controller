@@ -24,6 +24,7 @@ local POW_VARIABLE = "pow"
 local MODE_VARIABLE = "mode"
 local STEMP_VARIABLE = "stemp"
 local HTEMP_VARIABLE = "htemp"
+local OTEMP_VARIABLE = "otemp"
 local FRATE_VARIABLE= "f_rate"
 local FDIR_VARIABLE = "f_dir"
 local RETURN_VARIABLE = "ret"
@@ -100,6 +101,14 @@ function Daikin:setAttribute(attrKey,attrValue)
 				attr:setValue(htempVal)
 			end
 
+		elseif attrKey == OTEMP_VARIABLE then
+			local otempVal = tonumber(attrValue,10)
+			if otempVal ~= nil then
+				attr:setValue(otempVal)
+			else
+				attr:setValue(attrValue)
+			end
+
 		elseif attrKey == FRATE_VARIABLE then
 			local fVal = tonumber(attrValue)
 			if fVal ~= nil then
@@ -136,6 +145,7 @@ function initVariables(daikin_device)
 	---------- Current Temprature ---------
 	-- Set varaibles for TEMP_SENSOR_SID = "urn:upnp-org:serviceId:TemperatureSensor1"
 	attribs[HTEMP_VARIABLE] = initVariableIfNotSet("Current Temperature",  "CurrentTemperature", TEMP_SENSOR_SID, 0, daikin_device)
+	attribs[OTEMP_VARIABLE] = initVariableIfNotSet("Current Outside Temperature",  "CurrentOutsideTemperature", DAIKIN_WIFI_SID, 0, daikin_device)
 
 	---------- Set Temprature ---------
 	attribs[STEMP_VARIABLE] = initVariableIfNotSet("UPnP Temperature Set Point",  "CurrentSetpoint", TEMP_SETPOINT_SID, DEFAULT_SETPOINT, daikin_device)
