@@ -142,12 +142,12 @@ TestDaikin = {}
 
 TestDaikinWifiController = {}
 
-	-- function TestDaikinWifiController:testSendCommandFailOnAltId()
-	-- 	daikin_device_id = 1
-	-- 	luaunit.assertFalse(sendCommand("Test_URL", "", 0))
-	-- end
+	function TestDaikinWifiController:testSendCommandFailOnAltId()
+		daikin_device_id = 1
+		luaunit.assertFalse(sendCommand("Test_URL", "", 0))
+	end
 	
-	function TestDaikinWifiController:testDaikinStartup()
+	function TestDaikinWifiController:testSendCommand()
 		daikin_device_id = 200
 		daikin_device = Daikin.new(daikin_device_id)
 
@@ -156,6 +156,36 @@ TestDaikinWifiController = {}
 		
 		sendCommand("/common/basic_info", "", 0)
 		luaunit.assertEquals(daikin_device.attributes["name"].value,"Lounge")
+	end
+
+	function TestDaikinWifiController:testDeviceUpdate()
+		daikin_device_id = 201
+		daikin_device = Daikin.new(daikin_device_id)
+
+		luup.attr_set("altid",12,daikin_device_id)
+		luup.attr_set("ip","192.168.178.148",daikin_device_id)
+
+		deviceUpdate()
+
+		luaunit.assertNotNil(luup.variable_get("urn:micasaverde-com:serviceId:HaDevice1", "LastUpdate", daikin_device_id))
+		luaunit.assertEquals(daikin_device.attributes["htemp"].value,26.5)
+	end
+
+	function TestDaikinWifiController:testIntiPlugin()
+		daikin_device_id = 201
+
+		initPlugin()
+		luaunit.assertEquals(luup.variable_get("urn:asahani-org:serviceId:DaikinWifiController1", "PluginVersion", daikin_device_id),"0.01")
+		luaunit.assertEquals(luup.variable_get("urn:micasaverde-com:serviceId:HaDevice1", "Configured", daikin_device_id),0)
+	end
+
+	function TestDaikinWifiController:testDaikinStartup()
+		luup.attr_set("altid",12,202)
+		luup.attr_set("ip","192.168.178.148",202)
+
+		DaikinStartup("202")
+
+		luaunit.assertEquals(tonumber(luup.variable_get("urn:micasaverde-com:serviceId:HaDevice1", "Configured", 202)),1)
 	end
 
 -- end of Table TestDaikinWifiController	

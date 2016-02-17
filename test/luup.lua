@@ -77,3 +77,13 @@ function luup.attr_set(attr,value,deviceId)
 
     -- print("variable set: "..key..":"..value)
 end
+
+function luup.set_failure(status)
+    
+    luupvars["failure"] = status
+end
+
+function luup.call_delay(function_name,seconds,data)
+    
+    return 0
+end

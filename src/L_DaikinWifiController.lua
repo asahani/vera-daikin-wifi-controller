@@ -1,4 +1,5 @@
---local http = require("socket.http")
+-- Comment http require to run unit tests
+-- local http = require("socket.http")
 local utils = require("util")
 local daikin = require("Daikin")
 
@@ -6,9 +7,10 @@ http.TIMEOUT = 3
 
 DEBUG_MODE = false
 
-local VERSION = "0.01"
+local PLUGIN_VERSION = "0.01"
 
-local DEFAULT_POLL = "1m"
+local MAX_RETRY = 8
+local UPDATE_INTERVAL  = 60
 
 local GET_BASIC_INFO_URL = "/common/basic_info"
 local GET_CONTROL_URL = "/aircon/get_control_info"
@@ -28,6 +30,8 @@ local HA_DEVICE_SET_POLL_FREQUENCY = "SetPollFrequency"
 local HA_DEVICE_LAST_UPDATE = "LastUpdate"
 local HA_DEVICE_COMM_FAILURE = "CommFailure"
 local HA_DEVICE_CONFIG = "Configured"
+
+local DEFAULT_POLL = "1m"
 
 function sendCommand(command_url, data, retry)
 	local l_retry = retry or 0
@@ -54,7 +58,7 @@ function sendCommand(command_url, data, retry)
 	  daikin_device:setAttributes(parseBody(sParam))
 	  return true
 
-	elseif (l_retry <= 8) then
+	elseif (l_retry <= MAX_RETRY) then
 	  commandRetry(command_url, data, l_retry)
 
 	else
@@ -68,7 +72,7 @@ function commandRetry(command_url, data, retry)
 	sendCommand(command_url, data, retry)
 end
 
-local function initPlugin()
+function initPlugin()
 	luup.variable_set(DAIKIN_WIFI_SID, "Message", "", daikin_device_id)
 
 	-- set plugin version number
@@ -82,15 +86,23 @@ end
 
 -- Called in loop
 function deviceUpdate()
-	--get_control_info
-	--getsensorinfo
+	local pollInterval = luup.variable_get(MCV_HA_DEVICE_SID,HA_DEVICE_POLL,daikin_device_id) or ""
+    if (pollInterval == "") then
+      pollInterval = DEFAULT_POLL
+      luup.variable_set(MCV_HA_DEVICE_SID,HA_DEVICE_POLL,pollInterval,daikin_device_id)
+    end
+    luup.call_timer("deviceUpdate", 1, pollInterval, "", "")
+    luup.variable_set(MCV_HA_DEVICE_SID, HA_DEVICE_LAST_UPDATE, tostring(os.time()), daikin_device_id)
+    
+    sendCommand(GET_CONTROL_URL)
+    sendCommand(GET_SENSOR_URL)
 end
 
 ---------------------------------------------------------------------
 -- Statrup Function
 ---------------------------------------------------------------------
 function DaikinStartup(lul_device)
-	log(":Daikin Wifi Conntroller Plugin version " .. VERSION .. ".")
+	log(":Daikin Wifi Conntroller Plugin version " .. PLUGIN_VERSION .. ".")
 
     daikin_device_id = tonumber(lul_device)
 
@@ -113,11 +125,14 @@ function DaikinStartup(lul_device)
     local status = sendCommand(GET_BASIC_INFO_URL)
     if (status) then
       luup.set_failure(false, daikin_device_id)
+      
       sendCommand(GET_MODEL_URL)
       sendCommand(GET_CONTROL_URL)
+
       luup.attr_set("manufacturer", "Daikin", daikin_device_id)
 
-      luup.call_delay("deviceUpdate", 60, "")
+      luup.call_delay("deviceUpdate", UPDATE_INTERVAL, "")
+
       debug("Daikin Wifi Controller Plugin Startup SUCCESS: Startup successful.")
       luup.variable_set(MCV_HA_DEVICE_SID,  HA_DEVICE_CONFIG, "1", daikin_device_id)
 
