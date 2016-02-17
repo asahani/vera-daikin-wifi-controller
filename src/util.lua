@@ -24,9 +24,8 @@ end
 -------- Data Manipulation functions ----
 -----------------------------------------
 function parseBody(body)
-
 	local valuePairs = {}
-	for key,value in body:gmatch"([_%w]+)=([_%w]+)" do
+	for key,value in body:gmatch"([_%w]+)=([_%w%%]+)" do
 		valuePairs[key]=value
 	end
 	-- for key,value in pairs(valuePairs) do

@@ -53,6 +53,10 @@ function luup.call_timer()
 end
 
 function luup.attr_get(attr, deviceId)
+    if deviceId == nil then
+        deviceId = ""
+    end 
+    
     key = attr..deviceId
     value = luupvars[key]
 

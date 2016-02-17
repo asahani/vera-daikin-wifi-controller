@@ -7,6 +7,7 @@ local mockluup = require('luup')
 local util = require('util')
 local daikinAttribute = require('DaikinAttribute')
 local daikin = require('Daikin')
+local controller = require('L_DaikinWifiController')
 
 TestHttp = {}
 	function TestHttp:testRequest()
@@ -138,5 +139,26 @@ TestDaikin = {}
 	end
 	
 -- end of table TestDaikin
+
+TestDaikinWifiController = {}
+
+	-- function TestDaikinWifiController:testSendCommandFailOnAltId()
+	-- 	daikin_device_id = 1
+	-- 	luaunit.assertFalse(sendCommand("Test_URL", "", 0))
+	-- end
+	
+	function TestDaikinWifiController:testDaikinStartup()
+		daikin_device_id = 200
+		daikin_device = Daikin.new(daikin_device_id)
+
+		luup.attr_set("altid",12,daikin_device_id)
+		luup.attr_set("ip","192.168.178.148",daikin_device_id)
+		
+		sendCommand("/common/basic_info", "", 0)
+		luaunit.assertEquals(daikin_device.attributes["name"].value,"Lounge")
+	end
+
+-- end of Table TestDaikinWifiController	
+
 
 os.exit(luaunit.LuaUnit.run())

@@ -10,7 +10,6 @@ local COOL_SETPOINT_SID = "urn:upnp-org:serviceId:TemperatureSetpoint1_Cool"
 local FAN_MODE_SID = "urn:upnp-org:serviceId:HVAC_FanOperatingMode1"
 local FAN_SPEED_SID  = "urn:upnp-org:serviceId:FanSpeed1"
 local USER_OPERATING_MODE_SID = "urn:upnp-org:serviceId:HVAC_UserOperatingMode1"
-local MCV_HA_DEVICE_SID = "urn:micasaverde-com:serviceId:HaDevice1"
 local MCV_OPERATING_STATE_SID = "urn:micasaverde-com:serviceId:HVAC_OperatingState1"
 
 ------------------------------------------------------------------
@@ -18,16 +17,23 @@ local MCV_OPERATING_STATE_SID = "urn:micasaverde-com:serviceId:HVAC_OperatingSta
 ------------------------------------------------------------------
 local DEFAULT_SETPOINT = 21
 
-local DAIKIN_WIFI_SID  = "urn:asahani-org:serviceId:DaikinWifiController1"
+DAIKIN_WIFI_SID  = "urn:asahani-org:serviceId:DaikinWifiController1"
 
+local RETURN_VARIABLE = "ret"
 local POW_VARIABLE = "pow"
+local MODEL_VARIABLE = "model"
+local TYPE_VARIABLE = "type"
+local VERSION_VARIABLE = "ver"
+local NAME_VARIABLE = "name"
+local MAC_ADDR_VARIABLE = "mac"
+
 local MODE_VARIABLE = "mode"
 local STEMP_VARIABLE = "stemp"
 local HTEMP_VARIABLE = "htemp"
 local OTEMP_VARIABLE = "otemp"
 local FRATE_VARIABLE= "f_rate"
 local FDIR_VARIABLE = "f_dir"
-local RETURN_VARIABLE = "ret"
+
 local SHUM_VARIABLE = "shum"
 
 local g_modes = {
@@ -58,7 +64,7 @@ end
 -- Derived class methods
 function Daikin:setAttributes(attribs)
 	for key,val in pairs(attribs) do
---	  print("key : "..key.."-- value : "..val)
+	  -- print("key : "..key.."-- value : "..val)
 	  self:setAttribute(key,val)
 	end
 end
@@ -119,7 +125,9 @@ function Daikin:setAttribute(attrKey,attrValue)
 				setLuupVariable(TEMP_SETPOINT_SID, "CurrentSetpoint", "Auto", attr.deviceId)
 				attr:setValue(attrValue)
 			end
-
+		elseif attrKey == NAME_VARIABLE then
+			local deviceName = hexToASCII(attrValue)
+			attr:setValue(deviceName)
 		else
 			attr:setValue(attrValue)
 		end
@@ -132,14 +140,18 @@ end
 
 function initVariables(daikin_device)
 	-- initialize state variables
-	
 	local attribs = {}
 	attribs["test"] = initVariableIfNotSet("description",  "variableName", "serviceId", "initValue", daikin_device)
 
 	attribs[RETURN_VARIABLE] = initVariableIfNotSet("Command Return Status", RETURN_VARIABLE, DAIKIN_WIFI_SID, "OK", daikin_device)
-
-	---------- Set Mode ---------
 	attribs[POW_VARIABLE] = initVariableIfNotSet("Power",  POW_VARIABLE, DAIKIN_WIFI_SID, "0", daikin_device)
+	attribs[MODEL_VARIABLE] = initVariableIfNotSet("Model Info",  MODEL_VARIABLE, DAIKIN_WIFI_SID, "", daikin_device)
+	attribs[TYPE_VARIABLE] = initVariableIfNotSet("Device Type",  TYPE_VARIABLE, DAIKIN_WIFI_SID, "", daikin_device)
+	attribs[VERSION_VARIABLE] = initVariableIfNotSet("Device Version",  VERSION_VARIABLE, DAIKIN_WIFI_SID, "", daikin_device)
+	attribs[NAME_VARIABLE] = initVariableIfNotSet("Device Name",  NAME_VARIABLE, DAIKIN_WIFI_SID, "", daikin_device)
+	attribs[MAC_ADDR_VARIABLE] = initVariableIfNotSet("Model Info",  MAC_ADDR_VARIABLE, DAIKIN_WIFI_SID, "", daikin_device)
+	
+	---------- Set Mode ---------
 	attribs[MODE_VARIABLE] = initVariableIfNotSet("Operating Mode Target", MODE_VARIABLE, DAIKIN_WIFI_SID, "Off", daikin_device)
 
 	---------- Current Temprature ---------
@@ -151,7 +163,6 @@ function initVariables(daikin_device)
 	attribs[STEMP_VARIABLE] = initVariableIfNotSet("UPnP Temperature Set Point",  "CurrentSetpoint", TEMP_SETPOINT_SID, DEFAULT_SETPOINT, daikin_device)
 	
 	---------- Fan Control ---------
-	
 	-- Set varaibles for FAN_SPEED_SID  = "urn:upnp-org:serviceId:FanSpeed1"
 	attribs[FRATE_VARIABLE] = initVariableIfNotSet("Fan Speed",  "FanSpeedStatus", DAIKIN_WIFI_SID, "A", daikin_device)
 	attribs[FDIR_VARIABLE] = initVariableIfNotSet("Fan Direction", "FDIR_VARIABLE", DAIKIN_WIFI_SID, 3, daikin_device)
