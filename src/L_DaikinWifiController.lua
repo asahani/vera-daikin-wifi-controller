@@ -55,7 +55,7 @@ function sendCommand(command_url, data, retry)
 	log(":Daikin Wifi Conntroller - sendCommand commandString"..commandString)
 	debug("sendCommand: " .. commandString)
 	local sParam, status = http.request(commandString)
-	log(":Daikin Wifi Conntroller - sendCommand sparam="..sParam)
+	
 	if (status == 200 and sParam) then
 	  luup.variable_set(DAIKIN_WIFI_SID, "Message", sParam, daikin_device_id)
 	  daikin_device:setAttributes(parseBody(sParam))
@@ -86,7 +86,7 @@ function setFanMode(lul_device, NewMode)
 	end
 	commandString = daikin_device:getCommandString()
 
-	sendCommand(SET_CONTROL_URL,"&"..commandString)
+	sendCommand(SET_CONTROL_URL,"?"..commandString)
 	deviceUpdate()
 	
 	return true
@@ -114,7 +114,7 @@ function setFanSpeed(lul_device, FanSpeedTarget)
 
 	commandString = daikin_device:getCommandString()
 
-	sendCommand(SET_CONTROL_URL,"&"..commandString)
+	sendCommand(SET_CONTROL_URL,"?"..commandString)
 	deviceUpdate()
 	return true
 
@@ -140,7 +140,7 @@ function setModeTarget(lul_device, NewModeTarget)
 
 	commandString = daikin_device:getCommandString()
 
-	sendCommand(SET_CONTROL_URL,"&"..commandString)
+	sendCommand(SET_CONTROL_URL,"?"..commandString)
 	deviceUpdate()
 	return true
 
@@ -151,7 +151,7 @@ function setpoint(lul_device, NewCurrentSetpoint)
 
 	commandString = daikin_device:getCommandString()
 
-	sendCommand(SET_CONTROL_URL,"&"..commandString)
+	sendCommand(SET_CONTROL_URL,"?"..commandString)
 
 	return true
 end
