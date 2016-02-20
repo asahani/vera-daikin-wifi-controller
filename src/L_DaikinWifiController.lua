@@ -33,6 +33,8 @@ local HA_DEVICE_CONFIG = "Configured"
 
 local DEFAULT_POLL = "1m"
 
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 function sendCommand(command_url, data, retry)
 	local l_retry = retry or 0
 	
@@ -67,11 +69,94 @@ function sendCommand(command_url, data, retry)
 	end
 end
 
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 function commandRetry(command_url, data, retry)
 	retry = retry + 1
 	sendCommand(command_url, data, retry)
 end
 
+-------------------------------------------------------------------------------
+-- MIOS UI Call functions
+-------------------------------------------------------------------------------
+function setFanMode(lul_device, NewMode)
+	if NewMode == "Auto" then
+		daikin_device.attributes["f_rate"].value = "A"
+	end
+	commandString = daikin_device:getCommandString()
+
+	sendCommand(SET_CONTROL_URL,"&"..commandString)
+	deviceUpdate()
+	
+	return true
+end
+
+function setFanSpeed(lul_device, FanSpeedTarget)
+	local target = tonumber(FanSpeedTarget,10)
+
+	if target ~= nil then
+		if (target > 0 and target <= 20) then
+      		daikin_device.attributes["f_rate"].value = 3
+	    elseif(target > 20 and target <= 40) then
+	    	daikin_device.attributes["f_rate"].value = 4
+	    elseif(target > 40 and target <= 60) then
+	    	daikin_device.attributes["f_rate"].value = 5
+	    elseif(target > 60 and target <= 80) then
+	    	daikin_device.attributes["f_rate"].value = 6
+		elseif(target > 80) then
+	    	daikin_device.attributes["f_rate"].value = 7
+	    else
+	      debug("setFanSpeed: Unknown speed:" .. FanSpeedTarget)
+	      return false
+	    end
+	end
+
+	commandString = daikin_device:getCommandString()
+
+	sendCommand(SET_CONTROL_URL,"&"..commandString)
+	deviceUpdate()
+	return true
+
+end
+
+function setModeTarget(lul_device, NewModeTarget)
+	local newMode = NewModeTarget
+
+	if(NewModeTarget == "Off") then
+      daikin_device.attributes["pow"].value = "0"
+    elseif(NewModeTarget == "HeatOn") then
+      newMode = "4"
+    elseif(NewModeTarget == "AutoChangeOver") then
+      newMode = "0"
+    elseif(NewModeTarget == "CoolOn") then
+      newMode = "3"
+    else
+      debug("setModeTarget: Unknown mode:" .. NewModeTarget)
+      return false
+    end
+
+    daikin_device.attributes["mode"].value = newMode
+
+	commandString = daikin_device:getCommandString()
+
+	sendCommand(SET_CONTROL_URL,"&"..commandString)
+	deviceUpdate()
+	return true
+
+end
+
+function setpoint(lul_device, NewCurrentSetpoint)
+	daikin_device.attributes["stemp"].value = string.format("%.1f",tonumber(NewCurrentSetpoint))
+
+	commandString = daikin_device:getCommandString()
+
+	sendCommand(SET_CONTROL_URL,"&"..commandString)
+
+	return true
+end
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 function initPlugin()
 	luup.variable_set(DAIKIN_WIFI_SID, "Message", "", daikin_device_id)
 
@@ -84,6 +169,8 @@ function initPlugin()
     end
 end
 
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 -- Called in loop
 function deviceUpdate()
 	local pollInterval = luup.variable_get(MCV_HA_DEVICE_SID,HA_DEVICE_POLL,daikin_device_id) or ""

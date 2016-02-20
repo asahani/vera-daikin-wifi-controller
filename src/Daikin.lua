@@ -62,6 +62,18 @@ end
 
 
 -- Derived class methods
+function Daikin:getCommandString()
+	local power = POW_VARIABLE.."="..self.attributes[POW_VARIABLE].value
+	local mode = MODE_VARIABLE.."="..self.attributes[MODE_VARIABLE].value
+	local temprature = STEMP_VARIABLE.."="..string.format("%.1f",tonumber(self.attributes[STEMP_VARIABLE].value))
+	local humidity = SHUM_VARIABLE.."="..self.attributes[SHUM_VARIABLE].value
+	local fanSpeed = FRATE_VARIABLE.."="..self.attributes[FRATE_VARIABLE].value
+	local fanDirection = FDIR_VARIABLE.."="..self.attributes[FDIR_VARIABLE].value
+
+	return power.."&".. mode .."&".. temprature .."&" .. humidity .. "&".. fanSpeed .. "&".. fanDirection
+end
+
+
 function Daikin:setAttributes(attribs)
 	for key,val in pairs(attribs) do
 	  -- print("key : "..key.."-- value : "..val)
@@ -119,10 +131,10 @@ function Daikin:setAttribute(attrKey,attrValue)
 			local fVal = tonumber(attrValue)
 			if fVal ~= nil then
 				setLuupVariable(FAN_SPEED_SID, "FanSpeedStatus", fVal, attr.deviceId)
-				setLuupVariable(TEMP_SETPOINT_SID, "FanSpeedTarget", fVal, attr.deviceId)
+				setLuupVariable(FAN_SPEED_SID, "FanSpeedTarget", fVal, attr.deviceId)
 				attr:setValue(fVal)
 			else
-				setLuupVariable(TEMP_SETPOINT_SID, "CurrentSetpoint", "Auto", attr.deviceId)
+				setLuupVariable(FAN_MODE_SID, "Mode", "Auto", attr.deviceId)
 				attr:setValue(attrValue)
 			end
 		elseif attrKey == NAME_VARIABLE then

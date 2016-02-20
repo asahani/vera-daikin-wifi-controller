@@ -138,6 +138,14 @@ TestDaikin = {}
 		luaunit.assertEquals(device.attributes["stemp"].value,19.0)	
 	end
 	
+	function TestDaikin:testGetCommandString()
+		local device = Daikin.new(1)
+		device:setAttributes(parseBody("r_ret=OKs,pow=0,mode=3,adv=,stemp=19.0,shum=0,dt1=25.0,dt2=M,dt3=18.0,dt4=25.0,dt5=25.0,dt7=25.0,dh1=AUTO,dh2=50,dh3=0,dh4=0,dh5=0,dh7=AUTO,dhh=50,b_mode=3,b_stemp=18.0,b_shum=0,alert=255")
+)
+		local commandString = device:getCommandString()
+		luaunit.assertEquals(commandString,"pow=0&mode=3&stemp=19.0&shum=0&f_rate=0&f_dir=0")
+	end
+
 -- end of table TestDaikin
 
 TestDaikinWifiController = {}
@@ -186,6 +194,46 @@ TestDaikinWifiController = {}
 		DaikinStartup("202")
 
 		luaunit.assertEquals(tonumber(luup.variable_get("urn:micasaverde-com:serviceId:HaDevice1", "Configured", 202)),1)
+	end
+
+	function TestDaikinWifiController:testSetpoint()
+		luup.attr_set("altid",12,202)
+		luup.attr_set("ip","192.168.178.148",202)
+
+		DaikinStartup("203")
+		setpoint("203","25")
+
+		luaunit.assertEquals(daikin_device.attributes["stemp"].value,"25.0")
+	end
+
+	function TestDaikinWifiController:testSetModeTarget()
+		luup.attr_set("altid",12,202)
+		luup.attr_set("ip","192.168.178.148",202)
+
+		DaikinStartup("203")
+		setModeTarget("203","CoolOn")
+
+		luaunit.assertEquals(daikin_device.attributes["mode"].value,"3")
+	end
+
+	function TestDaikinWifiController:testSetFanSpeed()
+		luup.attr_set("altid",12,202)
+		luup.attr_set("ip","192.168.178.148",202)
+
+		DaikinStartup("203")
+		setFanSpeed("203",64)
+
+		luaunit.assertEquals(daikin_device.attributes["f_rate"].value,6)
+	end
+
+		function TestDaikinWifiController:testSetFanMode()
+		luup.attr_set("altid",12,202)
+		luup.attr_set("ip","192.168.178.148",202)
+
+		DaikinStartup("203")
+		setFanMode("203","Auto")
+
+		luaunit.assertEquals(daikin_device.attributes["f_rate"].value,"A")
 	end
 
 -- end of Table TestDaikinWifiController	
