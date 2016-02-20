@@ -5,7 +5,7 @@ local daikin = require("Daikin")
 
 http.TIMEOUT = 3
 
-DEBUG_MODE = false
+DEBUG_MODE = true
 
 local PLUGIN_VERSION = "0.01"
 
@@ -36,25 +36,26 @@ local DEFAULT_POLL = "1m"
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 function sendCommand(command_url, data, retry)
+	log(":Daikin Wifi Conntroller - sendCommand entered")
 	local l_retry = retry or 0
-	
-	local code = getDeviceCode(daikin_device_id)
+	log(":Daikin Wifi Conntroller - sendCommand url"..command_url)
+	-- local code = getDeviceCode(daikin_device_id)
 
-	if (code == "") then
-      return false, "sendCommand: No device code.", "Daikin Wifi Controller"
-    end
+	-- if (code == "") then
+ --      return false, "sendCommand: No device code.", "Daikin Wifi Controller"
+ --    end
     
 	local ip = getIp(daikin_device_id)
-	
+	log(":Daikin Wifi Conntroller - sendCommand ip="..ip)
 	if (ip == "") then
 	  return false, "sendCommand: No IP address.", "Daikin Wifi Controller"
 	end
 	
 	local commandString = "http://" .. ip .. command_url .. (data or "")
-	
+	log(":Daikin Wifi Conntroller - sendCommand commandString"..commandString)
 	debug("sendCommand: " .. commandString)
 	local sParam, status = http.request(commandString)
-	
+	log(":Daikin Wifi Conntroller - sendCommand sparam="..sParam)
 	if (status == 200 and sParam) then
 	  luup.variable_set(DAIKIN_WIFI_SID, "Message", sParam, daikin_device_id)
 	  daikin_device:setAttributes(parseBody(sParam))
@@ -192,12 +193,13 @@ function DaikinStartup(lul_device)
 	log(":Daikin Wifi Conntroller Plugin version " .. PLUGIN_VERSION .. ".")
 
     daikin_device_id = tonumber(lul_device)
+	log(":Daikin Wifi Conntroller device id " .. daikin_device_id .. ".")    
 
     -- PREREQUISITES CHECK
-    local code = getDeviceCode(daikin_device_id)
-	if (code == "") then
-      return false, "sendCommand: No device code.", "Daikin Wifi Controller"
-    end
+ --    local code = getDeviceCode(daikin_device_id)
+	-- if (code == "") then
+ --      return false, "sendCommand: No device code.", "Daikin Wifi Controller"
+ --    end
 
 	local ip = getIp(daikin_device_id)
 	if (ip == "") then
@@ -206,15 +208,21 @@ function DaikinStartup(lul_device)
 
 	-- initialise the plugin
 	initPlugin(daikin_device_id)
+	log(":Daikin Wifi Conntroller - init complete")
 	-- create Daikin device
     daikin_device = Daikin.new(daikin_device_id)
+    log(":Daikin Wifi Conntroller - daikin device created")
 
     local status = sendCommand(GET_BASIC_INFO_URL)
+     log(":Daikin Wifi Conntroller - First Send Command")
     if (status) then
+      log(":Daikin Wifi Conntroller - sendCommand status = true")
       luup.set_failure(false, daikin_device_id)
       
       sendCommand(GET_MODEL_URL)
+      log(":Daikin Wifi Conntroller - sendCommand Getmodel complete")
       sendCommand(GET_CONTROL_URL)
+      log(":Daikin Wifi Conntroller - sendCommand Getcontrol complete")
 
       luup.attr_set("manufacturer", "Daikin", daikin_device_id)
 
@@ -223,8 +231,9 @@ function DaikinStartup(lul_device)
       debug("Daikin Wifi Controller Plugin Startup SUCCESS: Startup successful.")
       luup.variable_set(MCV_HA_DEVICE_SID,  HA_DEVICE_CONFIG, "1", daikin_device_id)
 
-      luup.set_failure(false, daikin_device_id)            
+      luup.set_failure(false, daikin_device_id)         
+       log(":Daikin Wifi Conntroller - Startup successful.")   
       return true, "Startup successful.", "Daikin Wifi Controller"
     end
-
+     log(":Daikin Wifi Conntroller - exiting startup")
 end

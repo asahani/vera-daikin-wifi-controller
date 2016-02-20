@@ -53,7 +53,21 @@
         <serviceId>urn:upnp-org:serviceId:TemperatureSetpoint1_Cool</serviceId>
         <SCPDURL>S_TemperatureSetpoint1.xml</SCPDURL>
       </service>
+      <service>
+        <serviceType>urn:schemas-upnp-org:service:SwitchPower:1</serviceType>
+        <serviceId>urn:upnp-org:serviceId:SwitchPower1</serviceId>
+        <SCPDURL>S_SwitchPower1.xml</SCPDURL>
+      </service>
+      <service>
+        <serviceType>urn:schemas-micasaverde-com:service:HaDevice:1</serviceType>
+        <serviceId>urn:micasaverde-com:serviceId:HaDevice1</serviceId>
+        <SCPDURL>S_HaDevice1.xml</SCPDURL>
+      </service>
     </serviceList>
+
+    <implementationList>
+      <implementationFile>I_DaikinWifiController.xml</implementationFile>
+    </implementationList>
   </device>
 </root>
 

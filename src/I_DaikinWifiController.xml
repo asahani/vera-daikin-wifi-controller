@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <implementation>
+  <settings>
+    <protocol>raw</protocol>
+  </settings>
   <files>L_DaikinWifiController.lua</files>
   <startup>DaikinStartup</startup>
-  <incoming>
-    <lua>processMessage (lul_data, lul_device)</lua>
-  </incoming>
   <actionList>
     <action>
       <serviceId>urn:upnp-org:serviceId:HVAC_UserOperatingMode1</serviceId>

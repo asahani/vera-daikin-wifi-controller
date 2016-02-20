@@ -1,4 +1,5 @@
 util = require('util')
+daikinAttribute = require('DaikinAttribute')
 
 ------------------------------------------------------------------
 ----- Define SIDs used by the various thermostat services -------
@@ -17,7 +18,7 @@ local MCV_OPERATING_STATE_SID = "urn:micasaverde-com:serviceId:HVAC_OperatingSta
 ------------------------------------------------------------------
 local DEFAULT_SETPOINT = 21
 
-DAIKIN_WIFI_SID  = "urn:asahani-org:serviceId:DaikinWifiController1"
+DAIKIN_WIFI_SID  = "urn:asahani-com:serviceId:DaikinWifiController1"
 
 local RETURN_VARIABLE = "ret"
 local POW_VARIABLE = "pow"
@@ -177,7 +178,7 @@ function initVariables(daikin_device)
 	---------- Fan Control ---------
 	-- Set varaibles for FAN_SPEED_SID  = "urn:upnp-org:serviceId:FanSpeed1"
 	attribs[FRATE_VARIABLE] = initVariableIfNotSet("Fan Speed",  "FanSpeedStatus", DAIKIN_WIFI_SID, "A", daikin_device)
-	attribs[FDIR_VARIABLE] = initVariableIfNotSet("Fan Direction", "FDIR_VARIABLE", DAIKIN_WIFI_SID, 3, daikin_device)
+	attribs[FDIR_VARIABLE] = initVariableIfNotSet("Fan Direction", FDIR_VARIABLE, DAIKIN_WIFI_SID, 3, daikin_device)
 
 	---------- Humidity ---------
 	attribs[SHUM_VARIABLE] = initVariableIfNotSet("Humidity",  SHUM_VARIABLE, DAIKIN_WIFI_SID, 0, daikin_device)
