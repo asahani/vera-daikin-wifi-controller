@@ -1,5 +1,5 @@
 -- Comment http require to run unit tests
--- local http = require("socket.http")
+local http = require("socket.http")
 local utils = require("util")
 local daikin = require("Daikin")
 
