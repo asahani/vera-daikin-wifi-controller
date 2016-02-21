@@ -127,16 +127,20 @@ function setModeTarget(lul_device, NewModeTarget)
       daikin_device.attributes["pow"].value = "0"
     elseif(NewModeTarget == "HeatOn") then
       newMode = "4"
+      daikin_device.attributes["pow"].value = "1"
+      daikin_device.attributes["mode"].value = newMode
     elseif(NewModeTarget == "AutoChangeOver") then
       newMode = "0"
+      daikin_device.attributes["pow"].value = "1"
+      daikin_device.attributes["mode"].value = newMode
     elseif(NewModeTarget == "CoolOn") then
       newMode = "3"
+      daikin_device.attributes["pow"].value = "1"
+      daikin_device.attributes["mode"].value = newMode
     else
       debug("setModeTarget: Unknown mode:" .. NewModeTarget)
       return false
     end
-
-    daikin_device.attributes["mode"].value = newMode
 
 	commandString = daikin_device:getCommandString()
 
@@ -223,6 +227,8 @@ function DaikinStartup(lul_device)
       log(":Daikin Wifi Conntroller - sendCommand Getmodel complete")
       sendCommand(GET_CONTROL_URL)
       log(":Daikin Wifi Conntroller - sendCommand Getcontrol complete")
+      sendCommand(GET_SENSOR_URL)
+      log(":Daikin Wifi Conntroller - sendCommand GetSensor complete")
 
       luup.attr_set("manufacturer", "Daikin", daikin_device_id)
 

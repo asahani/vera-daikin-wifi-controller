@@ -485,6 +485,20 @@
                         ]
                     },
                     "ControlCode": "energy_normal"
+                },
+				{
+                    "ControlGroup":"5",
+					"ControlType": "variable",
+					"top": "2",
+					"left": "0",
+					"Display": {
+						"Service": "urn:asahani-com:serviceId:DaikinWifiController1",
+						"Variable": "name",
+						"Top": 150,
+						"Left": 271,
+						"Width": 100,
+						"Height": 20
+					}
                 }
             ]
         },
