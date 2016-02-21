@@ -53,14 +53,18 @@ function luup.call_timer()
 end
 
 function luup.attr_get(attr, deviceId)
+    if deviceId == nil then
+        deviceId = ""
+    end 
+    
     key = attr..deviceId
     value = luupvars[key]
 
-    if(value ~= nil) then 
-        print("variable get: "..key.. " is : "..value)
-    else
-        print("variable get: "..key.. " is : nil")
-    end
+    -- if(value ~= nil) then 
+    --     print("variable get: "..key.. " is : "..value)
+    -- else
+    --     print("variable get: "..key.. " is : nil")
+    -- end
 
     return value
 end
@@ -71,5 +75,15 @@ function luup.attr_set(attr,value,deviceId)
 
     if(value == nil) then value = "nil" end
 
-    print("variable set: "..key..":"..value)
+    -- print("variable set: "..key..":"..value)
+end
+
+function luup.set_failure(status)
+    
+    luupvars["failure"] = status
+end
+
+function luup.call_delay(function_name,seconds,data)
+    
+    return 0
 end

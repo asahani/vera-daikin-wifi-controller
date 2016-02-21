@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<implementation>
+  <settings>
+    <protocol>raw</protocol>
+  </settings>
+  <files>L_DaikinWifiController.lua</files>
+  <startup>DaikinStartup</startup>
+  <actionList>
+    <action>
+      <serviceId>urn:upnp-org:serviceId:HVAC_UserOperatingMode1</serviceId>
+      <name>SetModeTarget</name>
+      <run>setModeTarget(lul_device, lul_settings.NewModeTarget)</run>
+    </action>
+    <action>
+      <serviceId>urn:upnp-org:serviceId:HVAC_FanOperatingMode1</serviceId>
+      <name>SetMode</name>
+      <run>setFanMode(lul_device, lul_settings.NewMode)</run>
+    </action>
+    <action>
+      <serviceId>urn:upnp-org:serviceId:FanSpeed1</serviceId>
+      <name>SetFanSpeed</name>
+      <run>setFanSpeed(lul_device, lul_settings.NewFanSpeedTarget)</run>
+    </action>
+    <action>
+      <serviceId>urn:upnp-org:serviceId:TemperatureSetpoint1</serviceId>
+      <name>SetCurrentSetpoint</name>
+      <run>setpoint(lul_device, lul_settings.NewCurrentSetpoint)</run>
+    </action>
+    <action>
+      <serviceId>urn:upnp-org:serviceId:TemperatureSetpoint1_Heat</serviceId>
+      <name>SetCurrentSetpoint</name>
+      <run>setpoint(lul_device, lul_settings.NewCurrentSetpoint)</run>
+    </action>
+    <action>
+      <serviceId>urn:upnp-org:serviceId:TemperatureSetpoint1_Cool</serviceId>
+      <name>SetCurrentSetpoint</name>
+      <run>setpoint(lul_device, lul_settings.NewCurrentSetpoint)</run>
+    </action>
+    <action>
+      <serviceId>urn:micasaverde-com:serviceId:HaDevice1</serviceId>
+      <name>ToggleState</name>
+      <run>toggleOutput(lul_device, lul_settings.newTargetValue)</run>
+    </action>
+  </actionList>
+</implementation>
+
+
