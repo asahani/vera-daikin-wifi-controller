@@ -34,7 +34,7 @@ If you are interested in developing and testing then please download the test fi
 Then run ' lua TestSuite.lua' assuming that you have a lua dev environment setup on the command line.
 
 ## Acknowledgements
-I would like to thank zoot1612, hugheaves & dmlogic for lua and luup refernces. Also i would like to thank github user ael-code for the reference documentation for the BRP072A42 protocol.
+I would like to thank zoot1612, hugheaves & dmlogic for lua and luup references. Also i would like to thank github user ael-code for the reference documentation for the BRP072A42 protocol.
 
 ## References
 - https://github.com/ael-code/daikin-control
@@ -58,7 +58,7 @@ I would like to thank zoot1612, hugheaves & dmlogic for lua and luup refernces. 
 - http://wiki.micasaverde.com/index.php/Luup_Debugging
 
 ### Log location
-/tmp/log/cmh/LuaUPnP.log
+- /tmp/log/cmh/LuaUPnP.log
 
 ###Manually remove unwanted devices from Vera
 - http://<Vera_IP>:3480/data_request?id=device&action=delete&device=<device_ID>
