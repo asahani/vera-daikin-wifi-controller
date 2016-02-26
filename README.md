@@ -33,14 +33,15 @@ If you are interested in developing and testing then please download the test fi
 
 Then run ' lua TestSuite.lua' assuming that you have a lua dev environment setup on the command line.
 
+## Acknowledgements
+I would like to thank zoot1612, hugheaves & dmlogic for lua and luup refernces. Also i would like to thank github user ael-code for the reference documentation for the BRP072A42 protocol.
+
 ## References
 - https://github.com/ael-code/daikin-control
 - https://github.com/hugheaves/mios_wifi-thermostat
 - https://github.com/hugheaves/mios_zzcommon
 - https://github.com/dmlogic/vera-HeatingCoordinator
 
-###Manually remove unwanted devices from Vera
-- http://<Vera_IP>:3480/data_request?id=device&action=delete&device=<device_ID>
 
 ### Vera plugin development info
 - http://wiki.micasaverde.com/index.php/Plugin_Creation_Tutorial
@@ -58,3 +59,6 @@ Then run ' lua TestSuite.lua' assuming that you have a lua dev environment setup
 
 ### Log location
 /tmp/log/cmh/LuaUPnP.log
+
+###Manually remove unwanted devices from Vera
+- http://<Vera_IP>:3480/data_request?id=device&action=delete&device=<device_ID>
