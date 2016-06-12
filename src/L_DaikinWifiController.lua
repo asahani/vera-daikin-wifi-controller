@@ -5,7 +5,7 @@ local daikin = require("Daikin")
 
 http.TIMEOUT = 3
 
-DEBUG_MODE = true
+DEBUG_MODE = false
 
 local PLUGIN_VERSION = "0.01"
 
@@ -36,9 +36,9 @@ local DEFAULT_POLL = "1m"
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 function sendCommand(command_url, data, retry)
-	log(":Daikin Wifi Conntroller - sendCommand entered")
+	debug(":Daikin Wifi Conntroller - sendCommand entered")
 	local l_retry = retry or 0
-	log(":Daikin Wifi Conntroller - sendCommand url"..command_url)
+	debug(":Daikin Wifi Conntroller - sendCommand url"..command_url)
 	-- local code = getDeviceCode(daikin_device_id)
 
 	-- if (code == "") then
@@ -46,14 +46,14 @@ function sendCommand(command_url, data, retry)
  --    end
     
 	local ip = getIp(daikin_device_id)
-	log(":Daikin Wifi Conntroller - sendCommand ip="..ip)
+	debug(":Daikin Wifi Conntroller - sendCommand ip="..ip)
 	if (ip == "") then
 	  return false, "sendCommand: No IP address.", "Daikin Wifi Controller"
 	end
 	
 	local commandString = "http://" .. ip .. command_url .. (data or "")
-	log(":Daikin Wifi Conntroller - sendCommand commandString"..commandString)
-	debug("sendCommand: " .. commandString)
+	debug(":Daikin Wifi Conntroller - sendCommand commandString"..commandString)
+
 	local sParam, status = http.request(commandString)
 	
 	if (status == 200 and sParam) then
@@ -218,17 +218,17 @@ function DaikinStartup(lul_device)
     log(":Daikin Wifi Conntroller - daikin device created")
 
     local status = sendCommand(GET_BASIC_INFO_URL)
-     log(":Daikin Wifi Conntroller - First Send Command")
+     debug(":Daikin Wifi Conntroller - First Send Command")
     if (status) then
-      log(":Daikin Wifi Conntroller - sendCommand status = true")
+      debug(":Daikin Wifi Conntroller - sendCommand status = true")
       luup.set_failure(false, daikin_device_id)
       
       sendCommand(GET_MODEL_URL)
-      log(":Daikin Wifi Conntroller - sendCommand Getmodel complete")
+      debug(":Daikin Wifi Conntroller - sendCommand Getmodel complete")
       sendCommand(GET_CONTROL_URL)
-      log(":Daikin Wifi Conntroller - sendCommand Getcontrol complete")
+      debug(":Daikin Wifi Conntroller - sendCommand Getcontrol complete")
       sendCommand(GET_SENSOR_URL)
-      log(":Daikin Wifi Conntroller - sendCommand GetSensor complete")
+      debug(":Daikin Wifi Conntroller - sendCommand GetSensor complete")
 
       luup.attr_set("manufacturer", "Daikin", daikin_device_id)
 
